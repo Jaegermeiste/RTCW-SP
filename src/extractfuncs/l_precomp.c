@@ -45,6 +45,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <stdarg.h>
 #include <time.h>
 #include <math.h>
+#include <ctype.h>			// JG - fix toupper and tolower undefined
 #include "l_memory.h"
 #include "l_script.h"
 #include "l_precomp.h"
