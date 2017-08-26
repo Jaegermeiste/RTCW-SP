@@ -15,3 +15,5 @@ src/.vs/wolf/v15/ipch/AutoPCH/CGAME-d9c4a82e/CG_MAIN-32387716/CG_MAIN.ipch
 *.ilk
 *.exe
 *.suo
+*.db
+*.db
