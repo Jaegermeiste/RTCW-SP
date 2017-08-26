@@ -1,3 +1,16 @@
 *.opendb
 src/.vs/wolf/v15/ipch/AutoPCH/CGAME-d9c4a82e/CG_MAIN-32387716/CG_MAIN.ipch
 *.ipch
+*.obj
+*.sbr
+*.bsc
+*.tlog
+*.lib
+*.idb
+*.dll
+*.pdb
+*.log
+*.exp
+*.map
+*.ilk
+*.exe
