@@ -1165,33 +1165,116 @@ void Sys_Init( void ) {
 	Cmd_AddCommand( "in_restart", Sys_In_Restart_f );
 	Cmd_AddCommand( "net_restart", Sys_Net_Restart_f );
 
-	g_wv.osversion.dwOSVersionInfoSize = sizeof( g_wv.osversion );
-
-	if ( !GetVersionEx( &g_wv.osversion ) ) {
-		Sys_Error( "Couldn't get OS info" );
-	}
-
-	if ( g_wv.osversion.dwMajorVersion < 4 ) {
-		Sys_Error( "Wolf requires Windows version 4 or greater" );
-	}
-	if ( g_wv.osversion.dwPlatformId == VER_PLATFORM_WIN32s ) {
-		Sys_Error( "Wolf doesn't run on Win32s" );
-	}
-
-	if ( g_wv.osversion.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
-		Cvar_Set( "arch", "winnt" );
-	} else if ( g_wv.osversion.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS )   {
-		if ( LOWORD( g_wv.osversion.dwBuildNumber ) >= WIN98_BUILD_NUMBER ) {
-			Cvar_Set( "arch", "win98" );
-		} else if ( LOWORD( g_wv.osversion.dwBuildNumber ) >= OSR2_BUILD_NUMBER )   {
-			Cvar_Set( "arch", "win95 osr2.x" );
-		} else
-		{
-			Cvar_Set( "arch", "win95" );
-		}
-	} else
+	// JG - Determine winver
+	if (IsWindows10OrGreater())
 	{
-		Cvar_Set( "arch", "unknown Windows variant" );
+		Cvar_Set("arch", "win10+");
+	}
+	else if (IsWindows8Point1OrGreater())
+	{
+		Cvar_Set("arch", "win8.1+");
+	}
+	else if (IsWindows8OrGreater())
+	{
+		Cvar_Set("arch", "win8+");
+	}
+	else if (IsWindows7SP1OrGreater())
+	{
+		Cvar_Set("arch", "win7_SP1+");
+	}
+	else if (IsWindows7OrGreater())
+	{
+		Cvar_Set("arch", "win7+");
+	}
+	else if (IsWindowsVistaSP2OrGreater())
+	{
+		Cvar_Set("arch", "winVista_SP2+");
+	}
+	else if (IsWindowsVistaSP1OrGreater())
+	{
+		Cvar_Set("arch", "winVista_SP1+");
+	}
+	else if (IsWindowsVistaOrGreater())
+	{
+		Cvar_Set("arch", "winVista+");
+	}
+	else if (IsWindowsXPSP3OrGreater())
+	{
+		Cvar_Set("arch", "winXP_SP3+");
+	}
+	else if (IsWindowsXPSP2OrGreater())
+	{
+		Cvar_Set("arch", "winXP_SP2+");
+	}
+	else if (IsWindowsXPSP1OrGreater())
+	{
+		Cvar_Set("arch", "winXP_SP1+");
+	}
+	else if (IsWindowsXPOrGreater())
+	{
+		Cvar_Set("arch", "winXP+");
+	}
+	else
+	{
+		OSVERSIONINFOEX osversion;			// JG - Get rid of GetVersionExA
+		ULONGLONG		condMask = 0;
+
+		memset(&osversion, 0, sizeof(OSVERSIONINFOEX));				// JG - Clear struct
+		osversion.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+		osversion.dwMajorVersion = 4;									// Wolf requires Windows version 4 or greater
+		condMask = 0;
+		if (!VerifyVersionInfo(&osversion, VER_MAJORVERSION, VER_SET_CONDITION(condMask, VER_MAJORVERSION, VER_GREATER_EQUAL)))
+		{
+			Sys_Error("Wolf requires Windows version 4 or greater");
+		}
+
+		osversion.dwPlatformId = VER_PLATFORM_WIN32_WINDOWS;			// Wolf doesn't run on Win32s
+		condMask = 0;
+		if (!VerifyVersionInfo(&osversion, VER_PLATFORMID, VER_SET_CONDITION(condMask, VER_PLATFORMID, VER_GREATER_EQUAL))) 
+		{
+			Sys_Error("Wolf doesn't run on Win32s");
+		}
+
+		osversion.dwPlatformId = VER_PLATFORM_WIN32_NT;			// Test for generic WindowsNT
+		condMask = 0;
+		if (VerifyVersionInfo(&osversion, VER_PLATFORMID, VER_SET_CONDITION(condMask, VER_PLATFORMID, VER_GREATER_EQUAL)))
+		{
+			Cvar_Set("arch", "winnt");
+		}
+		else
+		{
+			osversion.dwPlatformId = VER_PLATFORM_WIN32_WINDOWS;
+			condMask = 0;
+			if (VerifyVersionInfo(&osversion, VER_PLATFORMID, VER_SET_CONDITION(condMask, VER_PLATFORMID, VER_GREATER_EQUAL)))
+			{
+				// Win9x
+				osversion.dwBuildNumber = WIN98_BUILD_NUMBER;
+				condMask = 0;
+				if (VerifyVersionInfo(&osversion, VER_BUILDNUMBER, VER_SET_CONDITION(condMask, VER_BUILDNUMBER, VER_GREATER_EQUAL)))
+				{
+					Cvar_Set("arch", "win98");
+				}
+				else 
+				{
+					osversion.dwBuildNumber = OSR2_BUILD_NUMBER;
+					condMask = 0;
+					if (VerifyVersionInfo(&osversion, VER_BUILDNUMBER, VER_SET_CONDITION(condMask, VER_BUILDNUMBER, VER_GREATER_EQUAL)))
+					{
+						Cvar_Set("arch", "win95 osr2.x");
+					}
+					else
+					{
+						// Assume Win95
+						Cvar_Set("arch", "win95");
+					}
+				}
+			}
+			else
+			{
+				Cvar_Set("arch", "unknown Windows variant");
+			}
+		}
 	}
 
 	// save out a couple things in rom cvars for the renderer to access

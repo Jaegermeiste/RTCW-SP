@@ -37,6 +37,8 @@ If you have questions concerning this license or the applicable additional terms
 #pragma warning( pop )
 #endif
 
+#include <VersionHelpers.h>				// JG - Get rid of GetVersionExA
+
 #define DIRECTINPUT_VERSION 0x0800
 
 #ifdef DOOMSOUND    ///// (SA) DOOMSOUND
@@ -103,7 +105,6 @@ typedef struct
 	HINSTANCE hInstance;
 	qboolean activeApp;
 	qboolean isMinimized;
-	OSVERSIONINFO osversion;
 
 	// when we get a windows message, we store the time off so keyboard processing
 	// can know the exact time of an event

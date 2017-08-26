@@ -1102,25 +1102,23 @@ static void GLW_InitExtensions( void ) {
 static qboolean GLW_CheckOSVersion( void ) {
 #define OSR2_BUILD_NUMBER 1111
 
-	OSVERSIONINFO vinfo;
-
-	vinfo.dwOSVersionInfoSize = sizeof( vinfo );
+	OSVERSIONINFOEX vinfo;				// JG - Get rid of GetVersionExA
+	ULONGLONG		condMask = 0;
+	memset(&vinfo, 0, sizeof(OSVERSIONINFOEX));				// JG - Clear struct
+	vinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	vinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	vinfo.dwMajorVersion = 4;
+	vinfo.dwBuildNumber = OSR2_BUILD_NUMBER;		// NT 4.x build numbers are all > OSR2
+	VER_SET_CONDITION(condMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
+	VER_SET_CONDITION(condMask, VER_PLATFORMID, VER_GREATER_EQUAL);
 
 	glw_state.allowdisplaydepthchange = qfalse;
 
-	if ( GetVersionEx( &vinfo ) ) {
-		if ( vinfo.dwMajorVersion > 4 ) {
-			glw_state.allowdisplaydepthchange = qtrue;
-		} else if ( vinfo.dwMajorVersion == 4 )   {
-			if ( vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
-				glw_state.allowdisplaydepthchange = qtrue;
-			} else if ( vinfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS )   {
-				if ( LOWORD( vinfo.dwBuildNumber ) >= OSR2_BUILD_NUMBER ) {
-					glw_state.allowdisplaydepthchange = qtrue;
-				}
-			}
-		}
-	} else
+	if (VerifyVersionInfo(&vinfo, VER_MAJORVERSION | VER_BUILDNUMBER, condMask))
+	{
+		glw_state.allowdisplaydepthchange = qtrue;
+	}
+	else
 	{
 		ri.Printf( PRINT_ALL, "GLW_CheckOSVersion() - GetVersionEx failed\n" );
 		return qfalse;
