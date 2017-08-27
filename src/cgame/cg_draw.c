@@ -603,9 +603,10 @@ void CG_DrawTeamBackground( int x, int y, int w, int h, float alpha, int team ) 
 	} else {
 		return;
 	}
-	trap_R_SetColor( hcolor );
-	CG_DrawPic( x, y, w, h, cgs.media.teamStatusBar );
-	trap_R_SetColor( NULL );
+
+	trap_R_SetColor(hcolor);
+	CG_DrawPic(x, y, w, h, cgs.media.teamStatusBar);
+	trap_R_SetColor(NULL);
 }
 
 //////////////////////
@@ -1205,6 +1206,16 @@ static void CG_DrawUpperRight( void ) {
 
 	y = 0;
 
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+	if (cg_fixedAspect.integer == 2) {
+		CG_SetScreenPlacement(PLACE_RIGHT, PLACE_CENTER);
+		
+	}
+	else if (cg_fixedAspect.integer == 1) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+
 	if ( cgs.gametype >= GT_TEAM ) {
 		y = CG_DrawTeamOverlay( y );
 	}
@@ -1507,8 +1518,14 @@ static void CG_DrawTeamInfo( void ) {
 	}
 	if ( chatHeight <= 0 ) {
 		return; // disabled
-
 	}
+
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_LEFT, PLACE_BOTTOM);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 	if ( cgs.teamLastChatPos != cgs.teamChatPos ) {
 		if ( cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer ) {
 			cgs.teamLastChatPos++;
@@ -1574,6 +1591,15 @@ static void CG_DrawPickupItem( void ) {
 	float   *fadeColor;
 	char pickupText[256];
 	float color[4];
+
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+	if (cg_fixedAspect.integer == 2) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	else if (cg_fixedAspect.integer == 1) {
+		CG_SetScreenPlacement(PLACE_LEFT, PLACE_BOTTOM);
+	}
+	// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
 
 	value = cg.itemPickup;
 	if ( value ) {
@@ -1690,6 +1716,13 @@ static void CG_DrawReward( void ) {
 	if ( !cg_drawRewards.integer ) {
 		return;
 	}
+
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 	color = CG_FadeColor( cg.rewardTime, REWARD_TIME );
 	if ( !color ) {
 		return;
@@ -1788,6 +1821,12 @@ static void CG_DrawDisconnect( void ) {
 		return;
 	}
 
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 	// also add text in center of screen
 	s = "Connection Interrupted"; // bk 010215 - FIXME
 	w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH;
@@ -1797,6 +1836,12 @@ static void CG_DrawDisconnect( void ) {
 	if ( ( cg.time >> 9 ) & 1 ) {
 		return;
 	}
+
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	x = 640 - 48;
 	y = 480 - 48;
@@ -1825,6 +1870,12 @@ static void CG_DrawLagometer( void ) {
 		CG_DrawDisconnect();
 		return;
 	}
+
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	//
 	// draw the graph
@@ -1981,6 +2032,12 @@ static void CG_DrawCenterString( void ) {
 		return;
 	}
 
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 	trap_R_SetColor( color );
 
 	start = cg.centerPrint;
@@ -2047,6 +2104,7 @@ static void CG_DrawWeapReticle( void ) {
 	vec4_t snoopercolor = {0.7, .8, 0.7, 0};    // greenish
 	float snooperBrightness;
 	float x = 80, y, w = 240, h = 240;
+	float width = 80.0;						// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	CG_AdjustFrom640( &x, &y, &w, &h );
 
@@ -2062,10 +2120,31 @@ static void CG_DrawWeapReticle( void ) {
 
 
 		// sides
-		CG_FillRect( 0, 0, 80, 480, color );
-		CG_FillRect( 560, 0, 80, 480, color );
+		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		if (cg_fixedAspect.integer)
+		{
+			if (cgs.glconfig.vidWidth * 480 > cgs.glconfig.vidHeight * 640) 
+			{
+				width = 0.5 * ((cgs.glconfig.vidWidth - (min(cgs.screenXScale, cgs.screenYScale) * 480)) / min(cgs.screenXScale, cgs.screenYScale));
+			}
+
+			CG_SetScreenPlacement(PLACE_LEFT, PLACE_BOTTOM);
+			CG_FillRect(0, 0, width, 480, color);
+			CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
+			CG_FillRect(640 - width, 0, width, 480, color);
+		}
+		else 
+		{
+			CG_FillRect(0, 0, 80, 480, color);
+			CG_FillRect(560, 0, 80, 480, color);
+		}
 
 		// center
+		if (cg_fixedAspect.integer) {
+			CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+		}
+		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 		if ( cgs.media.reticleShaderSimpleQ ) {
 			trap_R_DrawStretchPic( x, 0, w, h, 0, 0, 1, 1, cgs.media.reticleShaderSimpleQ );    // tl
 			trap_R_DrawStretchPic( x + w, 0, w, h, 1, 0, 0, 1, cgs.media.reticleShaderSimpleQ );  // tr
@@ -2080,10 +2159,30 @@ static void CG_DrawWeapReticle( void ) {
 		CG_FillRect( 380, 239, 177, 2, color );  // right
 	} else if ( weap == WP_SNOOPERSCOPE ) {
 		// sides
-		CG_FillRect( 0, 0, 80, 480, color );
-		CG_FillRect( 560, 0, 80, 480, color );
+		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		if (cg_fixedAspect.integer)
+		{
+			if (cgs.glconfig.vidWidth * 480 > cgs.glconfig.vidHeight * 640)
+			{
+				width = 0.5 * ((cgs.glconfig.vidWidth - (min(cgs.screenXScale, cgs.screenYScale) * 480)) / min(cgs.screenXScale, cgs.screenYScale));
+			}
+
+			CG_SetScreenPlacement(PLACE_LEFT, PLACE_BOTTOM);
+			CG_FillRect(0, 0, width, 480, color);
+			CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
+			CG_FillRect(640 - width, 0, width, 480, color);
+		}
+		else
+		{
+			CG_FillRect(0, 0, 80, 480, color);
+			CG_FillRect(560, 0, 80, 480, color);
+		}
 
 		// center
+		if (cg_fixedAspect.integer) {
+			CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+		}
+		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 //----(SA)	added
 		// DM didn't like how bright it gets
@@ -2117,12 +2216,37 @@ static void CG_DrawWeapReticle( void ) {
 		CG_FillRect( 319, 60, 1, 360, color );   // vert
 
 		CG_FillRect( 240, 220, 1, 40, color );   // r
-	} else if ( weap == WP_FG42SCOPE ) {
+	} 
+	else if ( weap == WP_FG42SCOPE ) 
+	{
 		// sides
-		CG_FillRect( 0, 0, 80, 480, color );
-		CG_FillRect( 560, 0, 80, 480, color );
+		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		if (cg_fixedAspect.integer) 
+		{
+			if (cgs.glconfig.vidWidth * 480 > cgs.glconfig.vidHeight * 640) 
+			{
+				width = 0.5 * ((cgs.glconfig.vidWidth - (min(cgs.screenXScale, cgs.screenYScale) * 480)) / min(cgs.screenXScale, cgs.screenYScale));
+				
+			}
+			
+			CG_SetScreenPlacement(PLACE_LEFT, PLACE_BOTTOM);
+			CG_FillRect(0, 0, width, 480, color);
+			CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
+			CG_FillRect(640 - width, 0, width, 480, color);
+			
+		}
+		else 
+		{
+			CG_FillRect(0, 0, 80, 480, color);
+			CG_FillRect(560, 0, 80, 480, color);
+		}
 
 		// center
+		if (cg_fixedAspect.integer) {
+			CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+		}
+		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 		if ( cgs.media.reticleShaderSimpleQ ) {
 			trap_R_DrawStretchPic( x,   0, w, h, 0, 0, 1, 1, cgs.media.reticleShaderSimpleQ );  // tl
 			trap_R_DrawStretchPic( x + w, 0, w, h, 1, 0, 0, 1, cgs.media.reticleShaderSimpleQ );  // tr
@@ -2156,6 +2280,12 @@ static void CG_DrawBinocReticle( void ) {
 	// an alternative.  This gives nice sharp lines at the expense of a few extra polys
 	vec4_t color = {0, 0, 0, 1};
 	float x, y, w = 320, h = 240;
+
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	if ( cgs.media.binocShaderSimpleQ ) {
 		CG_AdjustFrom640( &x, &y, &w, &h );
@@ -2203,6 +2333,11 @@ static void CG_DrawCrosshair( void ) {
 
 	hcolor[3] = cg_crosshairAlpha.value;    //----(SA)	added
 
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	// on mg42
 	if ( cg.snap->ps.eFlags & EF_MG42_ACTIVE ) {
@@ -2343,7 +2478,11 @@ static void CG_DrawCrosshair( void ) {
 
 	x = cg_crosshairX.integer;
 	y = cg_crosshairY.integer;
-	CG_AdjustFrom640( &x, &y, &w, &h );
+
+	if (!cg_fixedAspect.integer)	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	{
+		CG_AdjustFrom640(&x, &y, &w, &h);
+	}
 
 //----(SA)	modified
 	if ( friendInSights ) {
@@ -2355,9 +2494,17 @@ static void CG_DrawCrosshair( void ) {
 
 	// NERVE - SMF - modified, fixes crosshair offset in shifted/scaled 3d views
 	// (SA) also breaks scaled view...
-	trap_R_DrawStretchPic(  x + cg.refdef.x + 0.5 * ( cg.refdef.width - w ),
-							y + cg.refdef.y + 0.5 * ( cg.refdef.height - h ),
-							w, h, 0, 0, 1, 1, hShader );
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) 
+	{
+		CG_DrawPic(((SCREEN_WIDTH - w)*0.5f) + x, ((SCREEN_HEIGHT - h)*0.5f) + y, w, h, hShader);
+	}
+	else {
+		trap_R_DrawStretchPic(x + cg.refdef.x + 0.5 * (cg.refdef.width - w),
+													y + cg.refdef.y + 0.5 * (cg.refdef.height - h),
+													w, h, 0, 0, 1, 1, hShader);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 }
 
 
@@ -2508,6 +2655,12 @@ static void CG_DrawCrosshairNames( void ) {
 	}
 	// done.
 
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 	// scan the known entities to see if the crosshair is sighted on one
 	CG_ScanForCrosshairEntity();
 
@@ -2560,6 +2713,11 @@ CG_DrawSpectator
 =================
 */
 static void CG_DrawSpectator( void ) {
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_BOTTOM);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 	CG_DrawBigString( 320 - 9 * 8, 440, "SPECTATOR", 1.0F );
 	if ( cgs.gametype == GT_TOURNAMENT ) {
 		CG_DrawBigString( 320 - 15 * 8, 460, "waiting to play", 1.0F );
@@ -2581,6 +2739,12 @@ static void CG_DrawVote( void ) {
 	if ( !cgs.voteTime ) {
 		return;
 	}
+
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_LEFT, PLACE_TOP);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	// play a talk beep whenever it is modified
 	if ( cgs.voteModified ) {
@@ -2666,6 +2830,13 @@ static qboolean CG_DrawFollow( void ) {
 	if ( !( cg.snap->ps.pm_flags & PMF_FOLLOW ) ) {
 		return qfalse;
 	}
+
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_TOP);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 	color[0] = 1;
 	color[1] = 1;
 	color[2] = 1;
@@ -2755,6 +2926,12 @@ static void CG_DrawWarmup( void ) {
 	if ( !sec ) {
 		return;
 	}
+
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_TOP);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	if ( sec < 0 ) {
 		s = "Waiting for players";
@@ -2869,7 +3046,15 @@ static void CG_DrawFlashFade( void ) {
 		VectorClear( col );
 		col[3] = cgs.scrFadeAlphaCurrent;
 //		CG_FillRect( -10, -10, 650, 490, col );
-		CG_FillRect( 0, 0, 640, 480, col ); // why do a bunch of these extend outside 640x480?
+		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		if (cg_fixedAspect.integer) {
+			CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);
+			CG_FillRect(0, 0, 640, 480, col);
+		}
+		else {
+			CG_FillRect(0, 0, 640, 480, col); // why do a bunch of these extend outside 640x480?
+		}
+		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 	}
 }
 
@@ -2923,7 +3108,15 @@ static void CG_DrawFlashZoomTransition( void ) {
 			Vector4Set( color, 0, 0, 0, 1.0f - frac );
 		}
 
-		CG_FillRect( -10, -10, 650, 490, color );
+		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		if (cg_fixedAspect.integer) {
+			CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);
+			CG_FillRect(-10, -10, 650, 490, color);
+		}
+		else {
+			CG_FillRect(-10, -10, 650, 490, color);
+		}
+		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 	}
 }
 
@@ -2953,7 +3146,15 @@ static void CG_DrawFlashDamage( void ) {
 		VectorSet( col, 0.2, 0, 0 );
 		col[3] =  0.7 * ( redFlash / 5.0 );
 
-		CG_FillRect( -10, -10, 650, 490, col );
+		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		if (cg_fixedAspect.integer) {
+			CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);
+			CG_FillRect(-10, -10, 650, 490, col);
+		}
+		else {
+			CG_FillRect(-10, -10, 650, 490, col);
+		}
+		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 	}
 }
 
@@ -3005,7 +3206,16 @@ static void CG_DrawFlashFire( void ) {
 		col[2] = alpha;
 		col[3] = alpha;
 		trap_R_SetColor( col );
-		CG_DrawPic( -10, -10, 650, 490, cgs.media.viewFlashFire[( cg.time / 50 ) % 16] );
+
+		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		if (cg_fixedAspect.integer) {
+			trap_R_DrawStretchPic(-10, -10, 650, 490, 0, 0, 1, 1, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
+		}
+		else {
+			CG_DrawPic(-10, -10, 650, 490, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
+		}
+		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 		trap_R_SetColor( NULL );
 
 		trap_S_AddLoopingSound( cg.snap->ps.clientNum, cg.snap->ps.origin, vec3_origin, cgs.media.flameSound, (int)( 255.0 * alpha ) );
@@ -3052,7 +3262,14 @@ static void CG_DrawFlashLightning( void ) {
 			shader = cgs.media.viewTeslaDamageEffectShader;
 		}
 
-		CG_DrawPic( -10, -10, 650, 490, shader );
+		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		if (cg_fixedAspect.integer) {
+			trap_R_DrawStretchPic(-10, -10, 650, 490, 0, 0, 1, 1, shader);
+		}
+		else {
+			CG_DrawPic(-10, -10, 650, 490, shader);
+		}
+		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 	}
 }
 
@@ -3252,19 +3469,7 @@ void CG_Fade( int r, int g, int b, int a, int time, int duration ) {
 
 	return;
 
-
-	if ( time <= 0 ) {  // do instantly
-		cg.fadeRate = 1;
-		cg.fadeTime = cg.time - 1;  // set cg.fadeTime behind cg.time so it will start out 'done'
-	} else {
-		cg.fadeRate = 1.0f / time;
-		cg.fadeTime = cg.time + time;
-	}
-
-	cg.fadeColor2[ 0 ] = ( float )r / 255.0f;
-	cg.fadeColor2[ 1 ] = ( float )g / 255.0f;
-	cg.fadeColor2[ 2 ] = ( float )b / 255.0f;
-	cg.fadeColor2[ 3 ] = ( float )a / 255.0f;
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 }
 
 
@@ -3286,7 +3491,16 @@ static void CG_DrawGameScreenFade( void ) {
 
 	VectorClear( col );
 	col[3] = cg.viewFade;
-	CG_FillRect( 0, 0, 640, 480, col );
+
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);
+		CG_FillRect(0, 0, 640, 480, col);
+	}
+	else {
+		CG_FillRect(0, 0, 640, 480, col);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 }
 
 /*
@@ -3319,7 +3533,15 @@ static void CG_ScreenFade( void ) {
 			return;
 		}
 
-		CG_FillRect( 0, 0, 640, 480, cg.fadeColor1 );
+		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		if (cg_fixedAspect.integer) {
+			CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);
+			CG_FillRect(0, 0, 640, 480, cg.fadeColor1);
+		}
+		else {
+			CG_FillRect(0, 0, 640, 480, cg.fadeColor1);
+		}
+		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	} else {
 		t = ( float )msec * cg.fadeRate;
@@ -3330,7 +3552,15 @@ static void CG_ScreenFade( void ) {
 		}
 
 		if ( color[ 3 ] ) {
-			CG_FillRect( 0, 0, 640, 480, color );
+			// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+			if (cg_fixedAspect.integer) {
+				CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);
+				CG_FillRect(0, 0, 640, 480, color);
+			}
+			else {
+				CG_FillRect(0, 0, 640, 480, color);
+			}
+			// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 		}
 	}
 }
@@ -3379,6 +3609,16 @@ static void CG_Draw2D( void ) {
 			CG_DrawCrosshair();
 
 			if ( cg_drawStatus.integer ) {
+				// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+				if (cg_fixedAspect.integer == 2) {
+					CG_SetScreenPlacement(PLACE_LEFT, PLACE_BOTTOM);
+				}
+				else if (cg_fixedAspect.integer == 1) {
+					CG_SetScreenPlacement(PLACE_CENTER, PLACE_BOTTOM);
+				}
+				// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+			}
+
 				Menu_PaintAll();
 				CG_DrawTimedMenus();
 			}

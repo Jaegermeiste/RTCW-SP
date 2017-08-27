@@ -207,6 +207,14 @@ static void CG_DrawPlayerArmorValue( rectDef_t *rect, int font, float scale, vec
 
 	value = ps->stats[STAT_ARMOR];
 
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+	if (cg_fixedAspect.integer == 2) {
+		CG_SetScreenPlacement(PLACE_LEFT, PLACE_BOTTOM);
+	}
+	else if (cg_fixedAspect.integer == 1) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
 
 	if ( shader ) {
 		trap_R_SetColor( color );
@@ -276,6 +284,15 @@ static void CG_DrawPlayerWeaponIcon( rectDef_t *rect, qboolean drawHighlighted, 
 	if ( !cg_drawIcons.integer ) {
 		return;
 	}
+
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+	if (cg_fixedAspect.integer == 2) {
+		CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
+	}
+	else if (cg_fixedAspect.integer == 1) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
 
 	// DHM - Nerve :: special case for WP_CLASS_SPECIAL
 
@@ -432,7 +449,7 @@ CG_DrawCursorHints
 */
 extern void CG_DrawExitStats( void );
 
-static void CG_DrawCursorhint( rectDef_t *rect ) {
+static void CG_DrawCursorHint( rectDef_t *rect ) {
 	float       *color;
 	qhandle_t icon, icon2 = 0;
 	float scale, halfscale;
@@ -445,6 +462,12 @@ static void CG_DrawCursorhint( rectDef_t *rect ) {
 	CG_CheckForCursorHints();
 
 	icon = cgs.media.hintShaders[cg.cursorHintIcon];
+
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
 
 	switch ( cg.cursorHintIcon ) {
 	case HINT_NONE:
@@ -592,6 +615,15 @@ static void CG_DrawPlayerAmmoValue( rectDef_t *rect, int font, float scale, vec4
 		return;
 	}
 
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+	if (cg_fixedAspect.integer == 2) {
+		CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
+	}
+	else if (cg_fixedAspect.integer == 1) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+
 	if ( ps->weaponstate == WEAPON_RELOADING && type != 0 ) {
 		return;
 	}
@@ -641,7 +673,16 @@ static void CG_DrawPlayerAmmoValue( rectDef_t *rect, int font, float scale, vec4
 		} else {
 			Com_sprintf( num, sizeof( num ), "%i", value );
 			value = CG_Text_Width( num, font, scale, 0 );
-			CG_Text_Paint( rect->x + ( rect->w - value ) / 2, rect->y + rect->h, font, scale, color, num, 0, 0, textStyle );
+
+			// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+			if (type == 0) {
+				// Moved this up a little so it's not on top of the weapon heat bar
+				CG_Text_Paint(rect->x + (rect->w - value) / 2, -15 + rect->y + rect->h, font, scale, color, num, 0, 0, textStyle);
+			}
+			else {
+				CG_Text_Paint(rect->x + (rect->w - value) / 2, rect->y + rect->h, font, scale, color, num, 0, 0, textStyle);
+			}
+			// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
 
 //			if(special) {	// draw '0' for akimbo guns
 			if ( value2 || ( special && type == 1 ) ) {
@@ -887,6 +928,15 @@ static void CG_DrawHoldableItem( rectDef_t *rect, int font, float scale, qboolea
 		return;
 	}
 
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+	if (cg_fixedAspect.integer == 2) {
+		CG_SetScreenPlacement(PLACE_RIGHT, PLACE_CENTER);
+	}
+	else if (cg_fixedAspect.integer == 1) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+
 	value   = cg.predictedPlayerState.holdable[cg.holdableSelect];
 
 	if ( value ) {
@@ -1059,6 +1109,15 @@ static void CG_DrawPlayerHealth( rectDef_t *rect, int font, float scale, vec4_t 
 	ps = &cg.snap->ps;
 
 	value = ps->stats[STAT_HEALTH];
+
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+	if (cg_fixedAspect.integer == 2) {
+		CG_SetScreenPlacement(PLACE_LEFT, PLACE_BOTTOM);
+	}
+	else if (cg_fixedAspect.integer == 1) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
 
 	if ( shader ) {
 		trap_R_SetColor( color );
@@ -2152,6 +2211,15 @@ void CG_DrawWeapHeat( rectDef_t *rect, int align ) {
 		return;
 	}
 
+	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+	if (cg_fixedAspect.integer == 2) {
+		CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
+	}
+	else if (cg_fixedAspect.integer == 1) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
+
 	if ( align != HUD_HORIZONTAL ) {
 		flags |= 4;   // BAR_VERT
 
@@ -2177,6 +2245,13 @@ static void CG_DrawFatigue( rectDef_t *rect, vec4_t color, int align ) {
 	float barFrac;  //, omBarFrac;
 	int flags = 0;
 	float chargeTime;       // DHM - Nerve
+
+	if (cg_fixedAspect.integer == 2) {
+		CG_SetScreenPlacement(PLACE_LEFT, PLACE_BOTTOM);
+	}
+	else if (cg_fixedAspect.integer == 1) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
 
 	barFrac = (float)cg.snap->ps.sprintTime / SPRINTTIME;
 //	omBarFrac = 1.0f-barFrac;
@@ -2265,7 +2340,7 @@ void CG_OwnerDraw( float x, float y, float w, float h, float text_x, float text_
 		CG_DrawPlayerAmmoValue( &rect, font, scale, color, shader, textStyle, 0 );
 		break;
 	case CG_CURSORHINT:
-		CG_DrawCursorhint( &rect );
+		CG_DrawCursorHint( &rect );
 		break;
 //----(SA)	added
 	case CG_NEWMESSAGE:

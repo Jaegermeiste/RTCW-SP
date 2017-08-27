@@ -444,6 +444,12 @@ qboolean CG_DrawScoreboard( void ) {
 	float   *fadeColor;
 	char    *s;
 
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 	// don't draw amuthing if the menu or console is up
 	if ( cg_paused.integer ) {
 		cg.deferredPlayerLoading = 0;
@@ -621,6 +627,12 @@ void CG_DrawTourneyScoreboard( void ) {
 	int y;
 	int i;
 
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 	// request more scores regularly
 	if ( cg.scoresRequestTime + 2000 < cg.time ) {
 		cg.scoresRequestTime = cg.time;
@@ -633,9 +645,20 @@ void CG_DrawTourneyScoreboard( void ) {
 	color[3] = 1;
 
 	// draw the dialog background
-	color[0] = color[1] = color[2] = 0;
-	color[3] = 1;
-	CG_FillRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color );
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	if (cg_fixedAspect.integer) {
+		color[0] = color[1] = color[2] = 0;
+		color[3] = 1;
+		CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);
+		CG_FillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color);
+		CG_PopScreenPlacement();
+	}
+	else {
+		color[0] = color[1] = color[2] = 0;
+		color[3] = 1;
+		CG_FillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color);
+	}
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	// print the mesage of the day
 	s = CG_ConfigString( CS_MOTD );

@@ -799,6 +799,7 @@ typedef struct {
 	// view rendering
 	refdef_t refdef;
 	vec3_t refdefViewAngles;            // will be converted to refdef.viewaxis
+	float fov;			// either range checked cg_fov or forced value		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	// zoom key
 	qboolean zoomed;
@@ -1525,6 +1526,11 @@ typedef struct {
 	float screenXScale;                 // derived from glconfig
 	float screenYScale;
 	float screenXBias;
+	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	float screenYBias;
+	float screenXScaleStretch;
+	float screenYScaleStretch;
+	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	int serverCommandSequence;              // reliable command stream counter
 	int processedSnapshotNum;            // the number of snapshots cgame has requested
@@ -1683,6 +1689,7 @@ extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_ignore;
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_fov;
+extern vmCvar_t cg_fixedAspect;				// iortcw commit c60f99d9dae0fabf667a4ab8a8b79c51d306ac8c
 extern vmCvar_t cg_zoomFov;
 extern vmCvar_t cg_zoomDefaultBinoc;
 extern vmCvar_t cg_zoomDefaultSniper;
@@ -1830,6 +1837,13 @@ void CG_Concussive( centity_t *cent );
 //
 // cg_drawtools.c
 //
+// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+void CG_SetScreenPlacement(screenPlacement_e hpos, screenPlacement_e vpos);
+void CG_PopScreenPlacement(void);
+screenPlacement_e CG_GetScreenHorizontalPlacement(void);
+screenPlacement_e CG_GetScreenVerticalPlacement(void);
+// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+
 void CG_AdjustFrom640( float *x, float *y, float *w, float *h );
 void CG_FillRect( float x, float y, float width, float height, const float *color );
 void CG_HorizontalPercentBar( float x, float y, float width, float height, float percent );
