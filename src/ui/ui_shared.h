@@ -406,14 +406,6 @@ typedef struct {
 
 	float yscale;
 	float xscale;
-
-	// iortcw commit 79f79da55b03485fac01ca647b2a2b9b6ca73dc3
-	float yscaleStretch;
-	float xscaleStretch;
-	float yBias;
-	float xBias;
-	// end iortcw commit 79f79da55b03485fac01ca647b2a2b9b6ca73dc3
-
 	float bias;
 	int realTime;
 	int frameTime;
@@ -508,10 +500,5 @@ int         trap_PC_LoadSource( const char *filename );
 int         trap_PC_FreeSource( int handle );
 int         trap_PC_ReadToken( int handle, pc_token_t *pc_token );
 int         trap_PC_SourceFileAndLine( int handle, char *filename, int *line );
-
-void UI_SetScreenPlacement(screenPlacement_e hpos, screenPlacement_e vpos);
-void UI_PopScreenPlacement(void);
-screenPlacement_e UI_GetScreenHorizontalPlacement(void);
-screenPlacement_e UI_GetScreenVerticalPlacement(void);
 
 #endif

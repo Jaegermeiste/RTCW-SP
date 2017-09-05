@@ -1370,32 +1370,7 @@ static void UI_DrawClanCinematic( rectDef_t *rect, float scale, vec4_t color ) {
 			}
 			if ( uiInfo.teamList[i].cinematic >= 0 ) {
 				trap_CIN_RunCinematic( uiInfo.teamList[i].cinematic );
-				
-				// iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-				if (ui_fixedAspect.integer) {
-					if (DC->glconfig.vidWidth * 480.0 > DC->glconfig.vidHeight * 640.0) {
-						float scaledx = rect->x * (480.0 / 640.0) + (DC->xBias / DC->xscaleStretch);
-						float scaledw = rect->w * (480.0 / 640.0);
-
-						trap_CIN_SetExtents(uiInfo.teamList[i].cinematic, scaledx, rect->y, scaledw, rect->h);
-
-					}
-					else if (DC->glconfig.vidWidth * 480.0 < DC->glconfig.vidHeight * 640.0) {
-						float scaledy = rect->y * (480.0 / 640.0) + (DC->yBias / DC->yscaleStretch);
-						float scaledh = rect->h * (480.0 / 640.0);
-
-						trap_CIN_SetExtents(uiInfo.teamList[i].cinematic, rect->x, scaledy, rect->w, scaledh);
-
-					}
-					else {
-						trap_CIN_SetExtents(uiInfo.teamList[i].cinematic, rect->x, rect->y, rect->w, rect->h);
-					}
-				}
-				else {
-					trap_CIN_SetExtents(uiInfo.teamList[i].cinematic, rect->x, rect->y, rect->w, rect->h);
-				}
-				// end iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-
+				trap_CIN_SetExtents( uiInfo.teamList[i].cinematic, rect->x, rect->y, rect->w, rect->h );
 				trap_CIN_DrawCinematic( uiInfo.teamList[i].cinematic );
 			} else {
 				uiInfo.teamList[i].cinematic = -2;
@@ -1415,30 +1390,7 @@ static void UI_DrawPregameCinematic( rectDef_t *rect, float scale, vec4_t color 
 		uiInfo.previewMovie = trap_CIN_PlayCinematic( va( "%s.roq", "assault" ), 0, 0, 0, 0, ( CIN_loop | CIN_silent | CIN_system ) );
 		if ( uiInfo.previewMovie >= 0 ) {
 			trap_CIN_RunCinematic( uiInfo.previewMovie );
-			
-			// iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-			if (ui_fixedAspect.integer) {
-				if (DC->glconfig.vidWidth * 480.0 > DC->glconfig.vidHeight * 640.0) {
-					float scaledx = rect->x * (480.0 / 640.0) + (DC->xBias / DC->xscaleStretch);
-					float scaledw = rect->w * (480.0 / 640.0);
-					
-					trap_CIN_SetExtents(uiInfo.previewMovie, scaledx, rect->y, scaledw, rect->h);
-				}
-				else if (DC->glconfig.vidWidth * 480.0 < DC->glconfig.vidHeight * 640.0) {
-					float scaledy = rect->y * (480.0 / 640.0) + (DC->yBias / DC->yscaleStretch);
-					float scaledh = rect->h * (480.0 / 640.0);
-					
-					trap_CIN_SetExtents(uiInfo.previewMovie, rect->x, scaledy, rect->w, scaledh);
-				}
-				else {
-					trap_CIN_SetExtents(uiInfo.previewMovie, rect->x, rect->y, rect->w, rect->h);
-				}
-			}
-			else {
-				trap_CIN_SetExtents(uiInfo.previewMovie, rect->x, rect->y, rect->w, rect->h);
-			}
-			// end iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-
+			trap_CIN_SetExtents( uiInfo.previewMovie, rect->x, rect->y, rect->w, rect->h );
 			trap_CIN_DrawCinematic( uiInfo.previewMovie );
 		} else {
 			uiInfo.previewMovie = -2;
@@ -1452,30 +1404,7 @@ static void UI_DrawPreviewCinematic( rectDef_t *rect, float scale, vec4_t color 
 		uiInfo.previewMovie = trap_CIN_PlayCinematic( va( "%s.roq", uiInfo.movieList[uiInfo.movieIndex] ), 0, 0, 0, 0, ( CIN_loop | CIN_silent ) );
 		if ( uiInfo.previewMovie >= 0 ) {
 			trap_CIN_RunCinematic( uiInfo.previewMovie );
-			
-			// iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-			if (ui_fixedAspect.integer) {
-				if (DC->glconfig.vidWidth * 480.0 > DC->glconfig.vidHeight * 640.0) {
-					float scaledx = rect->x * (480.0 / 640.0) + (DC->xBias / DC->xscaleStretch);
-					float scaledw = rect->w * (480.0 / 640.0);
-					
-					trap_CIN_SetExtents(uiInfo.previewMovie, scaledx, rect->y, scaledw, rect->h);
-				}
-				else if (DC->glconfig.vidWidth * 480.0 < DC->glconfig.vidHeight * 640.0) {
-					float scaledy = rect->y * (480.0 / 640.0) + (DC->yBias / DC->yscaleStretch);
-					float scaledh = rect->h * (480.0 / 640.0);
-					
-					trap_CIN_SetExtents(uiInfo.previewMovie, rect->x, scaledy, rect->w, scaledh);
-				}
-				else {
-					trap_CIN_SetExtents(uiInfo.previewMovie, rect->x, rect->y, rect->w, rect->h);
-				}
-			}
-			else {
-				trap_CIN_SetExtents(uiInfo.previewMovie, rect->x, rect->y, rect->w, rect->h);
-			}
-			// end iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-
+			trap_CIN_SetExtents( uiInfo.previewMovie, rect->x, rect->y, rect->w, rect->h );
 			trap_CIN_DrawCinematic( uiInfo.previewMovie );
 		} else {
 			uiInfo.previewMovie = -2;
@@ -1775,30 +1704,7 @@ static void UI_DrawMapCinematic( rectDef_t *rect, float scale, vec4_t color, qbo
 		}
 		if ( uiInfo.mapList[map].cinematic >= 0 ) {
 			trap_CIN_RunCinematic( uiInfo.mapList[map].cinematic );
-			
-			// iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-			if (ui_fixedAspect.integer) {
-				if (DC->glconfig.vidWidth * 480.0 > DC->glconfig.vidHeight * 640.0) {
-					float scaledx = rect->x * (480.0 / 640.0) + (DC->xBias / DC->xscaleStretch);
-					float scaledw = rect->w * (480.0 / 640.0);
-					
-					trap_CIN_SetExtents(uiInfo.mapList[map].cinematic, scaledx, rect->y, scaledw, rect->h);
-				}
-				else if (DC->glconfig.vidWidth * 480.0 < DC->glconfig.vidHeight * 640.0) {
-					float scaledy = rect->y * (480.0 / 640.0) + (DC->yBias / DC->yscaleStretch);
-					float scaledh = rect->h * (480.0 / 640.0);
-					
-					trap_CIN_SetExtents(uiInfo.mapList[map].cinematic, rect->x, scaledy, rect->w, scaledh);
-				}
-				else {
-					trap_CIN_SetExtents(uiInfo.mapList[map].cinematic, rect->x, rect->y, rect->w, rect->h);
-				}
-			}
-			else {
-				trap_CIN_SetExtents(uiInfo.mapList[map].cinematic, rect->x, rect->y, rect->w, rect->h);
-			}
-			// end iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-
+			trap_CIN_SetExtents( uiInfo.mapList[map].cinematic, rect->x, rect->y, rect->w, rect->h );
 			trap_CIN_DrawCinematic( uiInfo.mapList[map].cinematic );
 		} else {
 			uiInfo.mapList[map].cinematic = -2;
@@ -1916,31 +1822,7 @@ static void UI_DrawNetMapCinematic( rectDef_t *rect, float scale, vec4_t color )
 
 	if ( uiInfo.serverStatus.currentServerCinematic >= 0 ) {
 		trap_CIN_RunCinematic( uiInfo.serverStatus.currentServerCinematic );
-		
-		// iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-		if (ui_fixedAspect.integer) {
-			if (DC->glconfig.vidWidth * 480.0 > DC->glconfig.vidHeight * 640.0) {
-				float scaledx = rect->x * (480.0 / 640.0) + (DC->xBias / DC->xscaleStretch);
-				float scaledw = rect->w * (480.0 / 640.0);
-				
-				trap_CIN_SetExtents(uiInfo.serverStatus.currentServerCinematic, scaledx, rect->y, scaledw, rect->h);
-			}
-			else if (DC->glconfig.vidWidth * 480.0 < DC->glconfig.vidHeight * 640.0) {
-				float scaledy = rect->y * (480.0 / 640.0) + (DC->yBias / DC->yscaleStretch);
-				float scaledh = rect->h * (480.0 / 640.0);
-				
-				trap_CIN_SetExtents(uiInfo.serverStatus.currentServerCinematic, rect->x, scaledy, rect->w, scaledh);
-			}
-			else {
-				trap_CIN_SetExtents(uiInfo.serverStatus.currentServerCinematic, rect->x, rect->y, rect->w, rect->h);
-			}
-		}
-		else {
-			trap_CIN_SetExtents(uiInfo.serverStatus.currentServerCinematic, rect->x, rect->y, rect->w, rect->h);
-		}
-		// end iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-
-
+		trap_CIN_SetExtents( uiInfo.serverStatus.currentServerCinematic, rect->x, rect->y, rect->w, rect->h );
 		trap_CIN_DrawCinematic( uiInfo.serverStatus.currentServerCinematic );
 	} else {
 		UI_DrawNetMapPreview( rect, scale, color );
@@ -6579,29 +6461,7 @@ static void UI_StopCinematic( int handle ) {
 }
 
 static void UI_DrawCinematic( int handle, float x, float y, float w, float h ) {
-	// iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-	if (ui_fixedAspect.integer) {
-		if (DC->glconfig.vidWidth * 480.0 > DC->glconfig.vidHeight * 640.0) {
-			float scaledx = x * (480.0 / 640.0) + (DC->xBias / DC->xscaleStretch);
-			float scaledw = w * (480.0 / 640.0);
-			
-			trap_CIN_SetExtents(handle, scaledx, y, scaledw, h);
-		}
-		else if (DC->glconfig.vidWidth * 480.0 < DC->glconfig.vidHeight * 640.0) {
-			float scaledy = y * (480.0 / 640.0) + (DC->yBias / DC->yscaleStretch);
-			float scaledh = h * (480.0 / 640.0);
-			
-			trap_CIN_SetExtents(handle, x, scaledy, w, scaledh);
-		}
-		else {
-			trap_CIN_SetExtents(handle, x, y, w, h);
-		}
-	}
-	else {
-		trap_CIN_SetExtents(handle, x, y, w, h);
-	}
-	// end iortcw commit 7529771cf7f8c31d154ea1953571589903fd60f5
-
+	trap_CIN_SetExtents( handle, x, y, w, h );
 	trap_CIN_DrawCinematic( handle );
 }
 
@@ -6689,42 +6549,15 @@ void _UI_Init( qboolean inGameLoad ) {
 	trap_GetGlconfig( &uiInfo.uiDC.glconfig );
 
 	// for 640x480 virtualized screen
-	// iortcw commit 79f79da55b03485fac01ca647b2a2b9b6ca73dc3
-	if (ui_fixedAspect.integer) {
-		uiInfo.uiDC.xscaleStretch = uiInfo.uiDC.glconfig.vidWidth * (1.0 / 640.0);
-		uiInfo.uiDC.yscaleStretch = uiInfo.uiDC.glconfig.vidHeight * (1.0 / 480.0);
-		if (uiInfo.uiDC.glconfig.vidWidth * 480 > uiInfo.uiDC.glconfig.vidHeight * 640) {
-			uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (1.0 / 640.0);
-			uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0 / 480.0);
-			// wide screen
-			uiInfo.uiDC.xBias = 0.5 * (uiInfo.uiDC.glconfig.vidWidth - (uiInfo.uiDC.glconfig.vidHeight * (640.0 / 480.0)));
-			uiInfo.uiDC.xscale = uiInfo.uiDC.yscale;
-			// no narrow screen
-			uiInfo.uiDC.yBias = 0;
-		}
-		else {
-			uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (1.0 / 640.0);
-			uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0 / 480.0);
-			// narrow screen
-			uiInfo.uiDC.yBias = 0.5 * (uiInfo.uiDC.glconfig.vidHeight - (uiInfo.uiDC.glconfig.vidWidth * (480.0 / 640.0)));
-			uiInfo.uiDC.yscale = uiInfo.uiDC.xscale;
-			// no wide screen
-			uiInfo.uiDC.xBias = 0;
-		}
+	uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * ( 1.0 / 480.0 );
+	uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * ( 1.0 / 640.0 );
+	if ( uiInfo.uiDC.glconfig.vidWidth * 480 > uiInfo.uiDC.glconfig.vidHeight * 640 ) {
+		// wide screen
+		uiInfo.uiDC.bias = 0.5 * ( uiInfo.uiDC.glconfig.vidWidth - ( uiInfo.uiDC.glconfig.vidHeight * ( 640.0 / 480.0 ) ) );
+	} else {
+		// no wide screen
+		uiInfo.uiDC.bias = 0;
 	}
-	else {
-		uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0 / 480.0);
-		uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (1.0 / 640.0);
-		if (uiInfo.uiDC.glconfig.vidWidth * 480 > uiInfo.uiDC.glconfig.vidHeight * 640) {
-			// wide screen
-			uiInfo.uiDC.bias = 0.5 * (uiInfo.uiDC.glconfig.vidWidth - (uiInfo.uiDC.glconfig.vidHeight * (640.0 / 480.0)));
-		}
-		else {
-			// no wide screen
-			uiInfo.uiDC.bias = 0;
-		}
-	}
-	// end iortcw commit 79f79da55b03485fac01ca647b2a2b9b6ca73dc3
 
 
 	//UI_Load();
@@ -7380,8 +7213,6 @@ vmCvar_t ui_autoactivate;
 vmCvar_t ui_emptyswitch;        //----(SA)	added
 // END JOSEPH
 
-vmCvar_t ui_fixedAspect;		// iortcw commit 79f79da55b03485fac01ca647b2a2b9b6ca73dc3
-
 vmCvar_t ui_server1;
 vmCvar_t ui_server2;
 vmCvar_t ui_server3;
@@ -7493,7 +7324,6 @@ cvarTable_t cvarTable[] = {
 	{ &ui_autoactivate, "cg_autoactivate", "1", CVAR_ARCHIVE },
 	{ &ui_useSuggestedWeapons, "cg_useSuggestedWeapons", "1", CVAR_ARCHIVE }, //----(SA)	added
 	{ &ui_emptyswitch, "cg_emptyswitch", "0", CVAR_ARCHIVE }, //----(SA)	added
-	{ &ui_fixedAspect, "cg_fixedAspect", "0", CVAR_ARCHIVE | CVAR_LATCH },			// iortcw commit 79f79da55b03485fac01ca647b2a2b9b6ca73dc3
 	{ &ui_server1, "server1", "", CVAR_ARCHIVE },
 	{ &ui_server2, "server2", "", CVAR_ARCHIVE },
 	{ &ui_server3, "server3", "", CVAR_ARCHIVE },

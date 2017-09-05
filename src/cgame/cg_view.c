@@ -801,7 +801,6 @@ Fixed fov at intermissions, otherwise account for fov variable and zooms.
 */
 #define WAVE_AMPLITUDE  1
 #define WAVE_FREQUENCY  0.4
-#define STANDARD_ASPECT_RATIO  ( (float)640 / (float)480 )		// iortcw commit c60f99d9dae0fabf667a4ab8a8b79c51d306ac8c
 
 static int CG_CalcFov( void ) {
 	static float lastfov = 90;      // for transitions back from zoomed in modes
@@ -828,11 +827,10 @@ static int CG_CalcFov( void ) {
 
 	if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
 		// if in intermission, use a fixed value
-		cg.fov = fov_x = 90;		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		fov_x = 90;
 	} else {
 		// user selectable
-		if ((cgs.dmflags & DF_FIXED_FOV) || cg_fixedAspect.integer) 		// iortcw commit c60f99d9dae0fabf667a4ab8a8b79c51d306ac8c, 2d97b71dc8552043c44676420bb713aa1c50c507
-		{
+		if ( cgs.dmflags & DF_FIXED_FOV ) {
 			// dmflag to prevent wide fov for all clients
 			fov_x = 90;
 		} else {
@@ -843,8 +841,6 @@ static int CG_CalcFov( void ) {
 				fov_x = 160;
 			}
 		}
-
-		cg.fov = fov_x;		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 		// account for zooms
 		if ( cg.zoomval ) {
@@ -898,18 +894,6 @@ static int CG_CalcFov( void ) {
 	if ( cg.snap->ps.persistant[PERS_HWEAPON_USE] ) {
 		fov_x = 55;
 	}
-
-	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
-	if (cg_fixedAspect.integer) {
-		// Based on LordHavoc's code for Darkplaces
-		// http://www.quakeworld.nu/forum/topic/53/what-does-your-qw-look-like/page/30
-		const float baseAspect = 0.75f; // 3/4
-		const float aspect = (float)cg.refdef.width / (float)cg.refdef.height;
-		const float desiredFov = fov_x;
-
-		fov_x = atan2(tan(desiredFov*M_PI / 360.0f) * baseAspect*aspect, 1)*360.0f / M_PI;
-	}
-	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	x = cg.refdef.width / tan( fov_x / 360 * M_PI );
 	fov_y = atan2( cg.refdef.height, x );
@@ -1094,18 +1078,6 @@ static int CG_CalcViewValues( void ) {
 			angles[PITCH] = -angles[PITCH];     // (SA) compensate for reversed pitch (this makes the game match the editor, however I'm guessing the real fix is to be done there)
 			VectorCopy( angles, cg.refdefViewAngles );
 			AnglesToAxis( cg.refdefViewAngles, cg.refdef.viewaxis );
-
-			// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
-			if (cg_fixedAspect.integer) {
-				// Based on LordHavoc's code for Darkplaces
-				// http://www.quakeworld.nu/forum/topic/53/what-does-your-qw-look-like/page/30
-				const float baseAspect = 0.75f; // 3/4
-				const float aspect = (float)cg.refdef.width / (float)cg.refdef.height;
-				const float desiredFov = fov;
-				
-				fov = atan2(tan(desiredFov*M_PI / 360.0f) * baseAspect*aspect, 1)*360.0f / M_PI;
-			}
-			// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 			x = cg.refdef.width / tan( fov / 360 * M_PI );
 			cg.refdef.fov_y = atan2( cg.refdef.height, x );
@@ -1370,8 +1342,7 @@ void CG_DrawSkyBoxPortal( void ) {
 			fov_x = 90;
 		} else {
 			// user selectable
-			if ((cgs.dmflags & DF_FIXED_FOV) || cg_fixedAspect.integer)		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
-			{
+			if ( cgs.dmflags & DF_FIXED_FOV ) {
 				// dmflag to prevent wide fov for all clients
 				fov_x = 90;
 			} else {
@@ -1427,18 +1398,6 @@ void CG_DrawSkyBoxPortal( void ) {
 		if ( cg.snap->ps.persistant[PERS_HWEAPON_USE] ) {
 			fov_x = 55;
 		}
-
-		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
-		if (cg_fixedAspect.integer) {
-			// Based on LordHavoc's code for Darkplaces
-			// http://www.quakeworld.nu/forum/topic/53/what-does-your-qw-look-like/page/30
-			const float baseAspect = 0.75f; // 3/4
-			const float aspect = (float)cg.refdef.width / (float)cg.refdef.height;
-			const float desiredFov = fov_x;
-			
-			fov_x = atan2(tan(desiredFov*M_PI / 360.0f) * baseAspect*aspect, 1)*360.0f / M_PI;
-		}
-		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 		x = cg.refdef.width / tan( fov_x / 360 * M_PI );
 		fov_y = atan2( cg.refdef.height, x );

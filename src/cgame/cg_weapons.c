@@ -2992,7 +2992,7 @@ Add the weapon, and flash for the player's view
 */
 void CG_AddViewWeapon( playerState_t *ps ) {
 	refEntity_t hand;
-	vec3_t fovOffset;		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+	float fovOffset;
 	vec3_t angles;
 	vec3_t gunoff;
 	weaponInfo_t    *weapon;
@@ -3034,25 +3034,13 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 		return;
 	}
 
-	// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
-	VectorClear(fovOffset);
 
-	if (cg_fixedAspect.integer) {
-		fovOffset[2] = 0;
+	// drop gun lower at higher fov
+	if ( cg_fov.integer > 90 ) {
+		fovOffset = -0.2 * ( cg_fov.integer - 90 );
+	} else {
+		fovOffset = 0;
 	}
-	else if (cg.fov > 90) {
-		// drop gun lower at higher fov
-		fovOffset[2] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
-	}
-	else if (cg.fov < 90) {
-		// move gun forward at lower fov
-		fovOffset[0] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
-	}
-	else if (cg_fov.integer > 90) {
-		// old auto adjust
-		fovOffset[2] = -0.2 * (cg_fov.integer - 90);
-	}
-	// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
 
 	if ( ps->weapon > WP_NONE ) {
 		// DHM - Nerve :: handle WP_CLASS_SPECIAL for different classes
@@ -3092,11 +3080,9 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 
 //----(SA)	removed
 
-		// iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
-		VectorMA(hand.origin, (gunoff[0] + fovOffset[0]), cg.refdef.viewaxis[0], hand.origin);
-		VectorMA(hand.origin, (gunoff[1] + fovOffset[1]), cg.refdef.viewaxis[1], hand.origin);
-		VectorMA(hand.origin, (gunoff[2] + fovOffset[2]), cg.refdef.viewaxis[2], hand.origin);
-		// end iortcw commit 2d97b71dc8552043c44676420bb713aa1c50c507
+		VectorMA( hand.origin, gunoff[0], cg.refdef.viewaxis[0], hand.origin );
+		VectorMA( hand.origin, gunoff[1], cg.refdef.viewaxis[1], hand.origin );
+		VectorMA( hand.origin, ( gunoff[2] + fovOffset ), cg.refdef.viewaxis[2], hand.origin );
 
 		AnglesToAxis( angles, hand.axis );
 
@@ -3157,15 +3143,6 @@ void CG_DrawWeaponSelect( void ) {
 	int realweap;               // DHM - Nerve
 	int bits[MAX_WEAPONS / ( sizeof( int ) * 8 )];
 	float       *color;
-
-	// iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
-	if (cg_fixedAspect.integer == 2) {
-		CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
-	}
-	else if (cg_fixedAspect.integer == 1) {
-		CG_SetScreenPlacement(PLACE_CENTER, PLACE_BOTTOM);
-	}
-	// end iortcw commit eb95dff287435a5710a8107f31b5c0a87214e470
 
 	// don't display if dead
 	if ( cg.predictedPlayerState.stats[STAT_HEALTH] <= 0 ) {

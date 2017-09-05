@@ -403,7 +403,28 @@ UI_Shutdown
 void UI_Shutdown( void ) {
 }
 
-// iortcw commit 79f79da55b03485fac01ca647b2a2b9b6ca73dc3
+/*
+================
+UI_AdjustFrom640
+
+Adjusted for resolution and screen aspect ratio
+================
+*/
+void UI_AdjustFrom640( float *x, float *y, float *w, float *h ) {
+	// expect valid pointers
+#if 0
+	*x = *x * uiInfo.uiDC.scale + uiInfo.uiDC.bias;
+	*y *= uiInfo.uiDC.scale;
+	*w *= uiInfo.uiDC.scale;
+	*h *= uiInfo.uiDC.scale;
+#endif
+
+	*x *= uiInfo.uiDC.xscale;
+	*y *= uiInfo.uiDC.yscale;
+	*w *= uiInfo.uiDC.xscale;
+	*h *= uiInfo.uiDC.yscale;
+
+}
 
 void UI_DrawNamedPic( float x, float y, float width, float height, const char *picname ) {
 	qhandle_t hShader;

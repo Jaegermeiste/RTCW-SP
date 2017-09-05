@@ -79,8 +79,6 @@ extern vmCvar_t ui_autoactivate;
 extern vmCvar_t ui_emptyswitch;
 // END JOSEPH
 
-extern vmCvar_t ui_fixedAspect;			// iortcw commit 79f79da55b03485fac01ca647b2a2b9b6ca73dc3
-
 extern vmCvar_t ui_server1;
 extern vmCvar_t ui_server2;
 extern vmCvar_t ui_server3;

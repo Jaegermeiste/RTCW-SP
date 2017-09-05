@@ -491,23 +491,6 @@ void CG_DrawInformation( void ) {
 	}
 
 	trap_R_SetColor( NULL );
-
-	// iortcw commit 561f1da8e03af25b975e811d18813c9e86b5078f
-	// Pillarboxes
-	if (cg_fixedAspect.integer) {
-		if (cgs.glconfig.vidWidth * 480.0 > cgs.glconfig.vidHeight * 640.0) {
-			vec4_t col = { 0, 0, 0, 1 };
-			float pillar = 0.5 * ((cgs.glconfig.vidWidth - (cgs.screenXScale * 640.0)) / cgs.screenXScale);
-			
-			CG_SetScreenPlacement(PLACE_LEFT, PLACE_CENTER);
-			CG_FillRect(0, 0, pillar + 1, 480, col);
-			CG_SetScreenPlacement(PLACE_RIGHT, PLACE_CENTER);
-			CG_FillRect(640 - pillar, 0, pillar + 1, 480, col);
-			CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);	
-		}
-	}
-	// end iortcw commit 561f1da8e03af25b975e811d18813c9e86b5078f
-
 //	CG_DrawPic( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, levelshot );
 
 	// blend a detail texture over it
